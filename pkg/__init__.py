@@ -1,0 +1,74 @@
+# from apiflask import APIFlask, Schema, input, output, abort
+# from apiflask.fields import Integer, String
+# from apiflask.validators import Length, OneOf
+
+# Base Model
+import os
+from re import U
+import click
+from apiflask import APIFlask
+from click.decorators import option
+from flask import cli
+
+# Import model
+from pkg.settings import config
+from pkg.extensions import db, mail
+
+# import views
+from pkg.blueprints.test import test_bp
+
+# 工厂模式
+def create_app(config_name=None)->APIFlask:
+    if config_name is None:
+        config_name = os.getenv('FLASK_CONFIG', 'development')
+
+    app = APIFlask(__name__)
+    app.config.from_object(config[config_name])
+    register_extensions(app)
+    register_blueprints(app)
+
+    register_commands(app)
+    return app
+
+
+def register_extensions(app:APIFlask):
+    ''' 初始化扩展 '''
+    db.init_app(app)
+    mail.init_app(app)
+
+
+def register_blueprints(app:APIFlask):
+    ''' 注册试图函数 '''
+    app.register_blueprint(test_bp, url_prefix='/test')
+
+
+def register_commands(app:APIFlask):
+    ''' 注册命令行命令 '''
+    @app.cli.command()
+    # @click.option("--email", prompt=True, help="The username used to login.")
+    @click.option("--username", prompt=True, help="The username used to login.")
+    @click.option("--password", prompt=True, hide_input=True, help="The password used to login.")
+    def initdb(username, password):
+        db.create_all()
+        from pkg.models import User
+        user:User = User.query.first()
+        if user is None:
+            user:User = User()
+        
+        user.username = username
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        click.echo('init dev databases.')
+
+
+
+
+def register_errors(app:APIFlask):
+    ''' 注册错误处理钩子 '''
+    pass
+
+def register_logging(app:APIFlask):
+    ''' 注册日志记录器 '''
+    pass
+
