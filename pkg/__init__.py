@@ -16,6 +16,7 @@ from pkg.extensions import db, mail
 
 # import views
 from pkg.blueprints.test import test_bp
+from pkg.blueprints.auth import auth_bp
 
 # 工厂模式
 def create_app(config_name=None)->APIFlask:
@@ -40,6 +41,7 @@ def register_extensions(app:APIFlask):
 def register_blueprints(app:APIFlask):
     ''' 注册试图函数 '''
     app.register_blueprint(test_bp, url_prefix='/test')
+    app.register_blueprint(auth_bp, url_prefix='/auth')
 
 
 def register_commands(app:APIFlask):
@@ -49,6 +51,7 @@ def register_commands(app:APIFlask):
     @click.option("--username", prompt=True, help="The username used to login.")
     @click.option("--password", prompt=True, hide_input=True, help="The password used to login.")
     def initdb(username, password):
+        db.drop_all()
         db.create_all()
         from pkg.models import User
         user:User = User.query.first()

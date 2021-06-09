@@ -14,8 +14,8 @@
 ## Installation
 
 ```shell
-$ git clone <url>
-$ cd aurora2.0
+$ git clone https://github.com/GKAurora/Aurora2.0-WebAPI.git
+$ cd Aurora2.0-WebAPI
 ```
 
 创建&&安装虚拟环境: with venv/virtualenv + pip:

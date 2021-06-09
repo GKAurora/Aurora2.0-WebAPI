@@ -41,13 +41,19 @@ class BaseConfig(object):
     MAIL_USE_SSL = True
     MAIL_USERNAME = os.getenv('MAIL_USERNAME')
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
-    MAIL_DEFAULT_SENDER = ('Code Share', MAIL_USERNAME)
+    MAIL_DEFAULT_SENDER = ('Aurora', MAIL_USERNAME)
+    # 用户等级划分
+    USER_GROUP = os.getenv('USER_GROUP', {
+        'user': 0,
+        'admin': 9
+    })
 
 
 # 开发环境配置
 class DevelopmentConfig(BaseConfig):
+    SQLALCHEMY_ECHO = True
     # 开发环境使用sqlite作为开发数据库
-    SQLALCHEMY_DATABASE_URI = prefix + os.path.join(basedir, 'data.db')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', prefix + os.path.join(basedir, 'data.db'))
 
 # 测试配置
 class TestingConfig(BaseConfig):

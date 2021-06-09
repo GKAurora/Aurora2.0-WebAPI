@@ -10,11 +10,20 @@ from pkg.extensions import db
 import sqlalchemy as sa
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import BadSignature, SignatureExpired, TimedJSONWebSignatureSerializer as Serializer
+from datetime import datetime
+
 
 class User(db.Model):
     id = sa.Column(sa.Integer, primary_key=True)
+    # 注册必备
     username = sa.Column(sa.String(20))
     password_hash = sa.Column(sa.String(128))
+    email = sa.Column(sa.String(260))
+    group = sa.Column(sa.Integer, default=0)
+    # 后期动态
+    login_ip = sa.Column(sa.String(21))
+    last_time = sa.Column(
+        sa.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def set_password(self, password):
         if len(password) < 5:
