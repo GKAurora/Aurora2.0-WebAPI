@@ -60,6 +60,7 @@ def register_commands(app:APIFlask):
         
         user.username = username
         user.set_password(password)
+        user.group = 9
         db.session.add(user)
         db.session.commit()
         click.echo('init dev databases.')

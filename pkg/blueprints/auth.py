@@ -73,6 +73,8 @@ class RegUserViews(MethodView):
     @doc(summary='用户注册', description="通过传数组实现多用户注册", tag='Auth')
     def post(self, datas):
         try:
+            if len(datas) < 1:
+                raise ValueError('参数缺失')
             self._reg(datas)
             return make_res()
         except ValueError as ve:

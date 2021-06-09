@@ -19,4 +19,4 @@ class UserLoginInSchema(Schema):
 class UserRegInSchema(UserLoginInSchema):
     # pass
     email = Email(required=True)
-    group = Integer(validate=lambda s: s<=10 and s >= 0)
+    group = Integer(validate=lambda s: s < 10 and s >= 0)
