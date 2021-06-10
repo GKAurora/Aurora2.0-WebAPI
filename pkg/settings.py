@@ -44,8 +44,8 @@ class BaseConfig(object):
     MAIL_DEFAULT_SENDER = ('Aurora', MAIL_USERNAME)
     # 用户等级划分
     USER_GROUP = os.getenv('USER_GROUP', {
-        0: 'user',
-        9: 'admin'
+        0: '普通用户',
+        9: '管理员'
     })
 
 

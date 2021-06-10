@@ -4,9 +4,12 @@
 
 # Base Model
 import os
+
+from werkzeug.exceptions import Unauthorized
+from pkg.schemas import make_res
 from re import U
 import click
-from apiflask import APIFlask
+from apiflask import APIFlask, abort
 from click.decorators import option
 from flask import cli
 
@@ -17,6 +20,7 @@ from pkg.extensions import db, mail
 # import views
 from pkg.blueprints.test import test_bp
 from pkg.blueprints.auth import auth_bp
+from pkg.blueprints.users import user_bp
 
 # 工厂模式
 def create_app(config_name=None)->APIFlask:
@@ -27,7 +31,7 @@ def create_app(config_name=None)->APIFlask:
     app.config.from_object(config[config_name])
     register_extensions(app)
     register_blueprints(app)
-
+    register_errors(app)
     register_commands(app)
     return app
 
@@ -42,6 +46,7 @@ def register_blueprints(app:APIFlask):
     ''' 注册试图函数 '''
     app.register_blueprint(test_bp, url_prefix='/test')
     app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(user_bp, url_prefix='/user')
 
 
 def register_commands(app:APIFlask):
@@ -70,7 +75,15 @@ def register_commands(app:APIFlask):
 
 def register_errors(app:APIFlask):
     ''' 注册错误处理钩子 '''
-    pass
+    @app.errorhandler(ValueError)
+    def not_Authorization(e):
+        return make_res(code=400, message=str(e)), 400
+    
+    @app.errorhandler(Exception)
+    def internal_server_error(e):
+        return make_res(code=500, message=str(e)), 500
+
+
 
 def register_logging(app:APIFlask):
     ''' 注册日志记录器 '''
