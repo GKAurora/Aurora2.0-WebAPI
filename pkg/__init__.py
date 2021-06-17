@@ -21,6 +21,7 @@ from pkg.extensions import db, mail
 from pkg.blueprints.test import test_bp
 from pkg.blueprints.auth import auth_bp
 from pkg.blueprints.users import user_bp
+from pkg.blueprints.sdn import sdn_bp
 
 # 工厂模式
 def create_app(config_name=None)->APIFlask:
@@ -47,6 +48,7 @@ def register_blueprints(app:APIFlask):
     app.register_blueprint(test_bp, url_prefix='/test')
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(user_bp, url_prefix='/user')
+    app.register_blueprint(sdn_bp, url_prefix='/sdn')
 
 
 def register_commands(app:APIFlask):
