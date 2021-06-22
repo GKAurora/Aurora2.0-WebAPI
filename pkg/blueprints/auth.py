@@ -91,11 +91,7 @@ class RegUserViews(MethodView):
                 if user:
                     raise ValueError(f'{data["username"]}用户已存在')
                 db.session.query
-                user:User = User()
-                user.email = data['email']
-                user.username = data['username']
-                user.set_password(data['password'])
-                user.group = data['group']
+                user:User = User(**data)
                 db.session.add(user)
                 db.session.commit()
         except Exception as e:
