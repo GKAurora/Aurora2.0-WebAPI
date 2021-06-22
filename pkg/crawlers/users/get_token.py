@@ -14,11 +14,6 @@ class GetToken(BaseCrawler):
 
     @classmethod
     def get_token(cls):
-        data_body = {
-            "grantType": "password",
-            "userName": HUAWEI_USERNAME,
-            "value": HUAWEI_PASSWORD
-        }
-        response = BaseCrawler.put(url='/rest/plat/smapp/v1/oauth/token', data=data_body)
-        return response.json().get('accessSession')
+        token = BaseCrawler.get_token()
+        return token
 

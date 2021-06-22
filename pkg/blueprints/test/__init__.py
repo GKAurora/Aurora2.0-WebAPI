@@ -35,3 +35,7 @@ class HuaweiApiTest(MethodView):
         return make_res(data={
             'token': token
         })
+
+@test_bp.get('/testCurrent')
+def test_current():
+    return make_res(data=current_app.config.get('token', '123'))

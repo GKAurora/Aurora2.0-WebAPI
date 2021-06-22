@@ -6,7 +6,9 @@
     :date: 2021/06/22 16:14:38
 '''
 import json
-from pkg.crawlers.setting import HOST, INITVAL_CODE, TIMEOUT
+from flask import current_app
+from requests.models import Response
+from pkg.crawlers.setting import HOST, HUAWEI_PASSWORD, HUAWEI_USERNAME, INITVAL_CODE, TIMEOUT
 from pkg.exceptions.reqerror import RequestException
 from fake_headers import Headers
 import requests
@@ -18,7 +20,7 @@ class BaseCrawler(object):
 
     @staticmethod
     def generate_header(**kwargs):
-        token = kwargs.get('token', None)
+        token = current_app.config.get('token', None)
         headers = Headers(headers=True).generate()
         headers.setdefault('Content-Type', 'application/json')
         if token != None:
@@ -59,7 +61,18 @@ class BaseCrawler(object):
             print("链接错误")
 
     @staticmethod
-    def put(url:str, **kwargs):
+    def put(url:str, **kwargs) -> Response:
+        """封装put方法
+
+        Args:
+            url (str): 请求接口
+
+        Raises:
+            RequestException: 请求错误
+
+        Returns:
+            [Response]: 响应体
+        """
         url = f'{HOST}{url}'
         try:
             kwargs = BaseCrawler.generate_header(**kwargs)
@@ -75,3 +88,22 @@ class BaseCrawler(object):
             raise RequestException
         except requests.ConnectionError:
             print("链接错误")
+
+    @classmethod
+    def get_token(cls):
+        """获取华为api token
+
+        Returns:
+            str: 华为api的token
+        """
+        data_body = {
+            "grantType": "password",
+            "userName": HUAWEI_USERNAME,
+            "value": HUAWEI_PASSWORD
+        }
+        response = BaseCrawler.put(url='/rest/plat/smapp/v1/oauth/token', data=data_body)
+        token = response.json().get('accessSession')
+        current_app.config.setdefault('token', token)
+        return token
+
+
