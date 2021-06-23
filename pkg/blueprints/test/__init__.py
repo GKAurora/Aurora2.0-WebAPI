@@ -38,4 +38,17 @@ class HuaweiApiTest(MethodView):
 
 @test_bp.get('/testCurrent')
 def test_current():
-    return make_res(data=current_app.config.get('token', '123'))
+    return make_res(data=current_app.config.get('token', None))
+
+
+@test_bp.get('/heatmap')
+def heatmap():
+    from pkg.crawlers.users.heatmap import HeatMap
+    res = HeatMap.get_data()
+    return make_res(data=res)
+
+@test_bp.get('/getsites')
+def sites():
+    from pkg.crawlers.users.get_sites import GetSites
+    res = GetSites.get_data()
+    return make_res(data=res)

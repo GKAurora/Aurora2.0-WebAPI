@@ -6,6 +6,7 @@
     :date: 2021/06/22 16:14:38
 '''
 import json
+from pkg.exceptions.token import TokenExpireException
 from flask import current_app
 from requests.models import Response
 from pkg.crawlers.setting import HOST, HUAWEI_PASSWORD, HUAWEI_USERNAME, INITVAL_CODE, TIMEOUT
@@ -34,11 +35,16 @@ class BaseCrawler(object):
         url = f'{HOST}{url}'
         try:
             kwargs = BaseCrawler.generate_header(**kwargs)
+            kwargs.setdefault('verify', False)
             response = requests.get(url, **kwargs)
             if response.status_code in INITVAL_CODE:
                 response.encoding = 'utf-8'
                 return response
+            if response.status_code == 401:
+                raise TokenExpireException
+            raise RequestException
         except requests.ConnectionError:
+            print("链接错误")
             return 
     
     @staticmethod
@@ -49,16 +55,19 @@ class BaseCrawler(object):
             kwargs.setdefault('verify', False)
             req_data = kwargs.get('data', None)
             if req_data:
-                data = json.dumps(req_data)
-            kwargs.pop('data')
-            response = requests.post(url, data=data, **kwargs)
-            print(response)
+                req_data = json.dumps(req_data)
+            kwargs.pop('data', None)
+            response = requests.post(url, data=req_data, **kwargs)
             if response.status_code in INITVAL_CODE:
                 response.encoding = 'utf-8'
                 return response
+            if response.status_code == 401:
+                raise TokenExpireException
             raise RequestException
         except requests.ConnectionError:
             print("链接错误")
+        # except Exception as e:
+        #     print(type(e), e)
 
     @staticmethod
     def put(url:str, **kwargs) -> Response:
@@ -79,12 +88,14 @@ class BaseCrawler(object):
             kwargs.setdefault('verify', False)
             req_data = kwargs.get('data', None)
             if req_data:
-                data = json.dumps(req_data)
-            kwargs.pop('data')
-            response = requests.put(url, data=data, **kwargs)
+                req_data = json.dumps(req_data)
+            kwargs.pop('data', None)
+            response = requests.put(url, data=req_data, **kwargs)
             if response.status_code in INITVAL_CODE:
                 response.encoding = 'utf-8'
                 return response
+            if response.status_code == 401:
+                raise TokenExpireException
             raise RequestException
         except requests.ConnectionError:
             print("链接错误")
