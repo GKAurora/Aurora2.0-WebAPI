@@ -37,6 +37,7 @@ class BaseCrawler(object):
             kwargs = BaseCrawler.generate_header(**kwargs)
             kwargs.setdefault('verify', False)
             response = requests.get(url, **kwargs)
+            print('req', response)
             if response.status_code in INITVAL_CODE:
                 response.encoding = 'utf-8'
                 return response

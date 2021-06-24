@@ -24,17 +24,6 @@ class HeatMap(BaseCrawler):
             }
             res = BaseCrawler.post(url=url, params=params)
             data = res.json().get('data')
-            # min_data, max_data = MIN_DATA, MAX_DATA
-            # for d in data:
-            #     if min_data > d.get('count'):
-            #         min_data = d.get('count')
-            #     if max_data < d.get('count'):
-            #         max_data = d.get('count')
-            
-            # # error = max_data - min_data
-            # for d in data:
-            #     d['value'] = math.floor()
-            #     d.pop('count', None)
             return data
         except TokenExpireException as tke:
             print('tke', tke)

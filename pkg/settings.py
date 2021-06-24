@@ -48,6 +48,14 @@ class BaseConfig(object):
         9: '管理员'
     })
 
+    # 站点划分
+    SITES_NAME = {
+        'Nanjing': '南京',
+        'Shanghai': '上海',
+        'Shenzhen': '深圳',
+        'Suzhou': '苏州'
+    }
+
 
 # 开发环境配置
 class DevelopmentConfig(BaseConfig):
