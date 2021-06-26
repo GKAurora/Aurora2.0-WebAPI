@@ -5,7 +5,10 @@
     :url: https://blog.farmer233.top
     :date: 2021/06/24 18:23:33
 '''
+from pkg.exceptions.reqerror import RequestException
+from pkg.util.time_parse import get_utc_time
 from typing import List
+from flask.globals import current_app
 from pkg.crawlers.base import BaseCrawler
 from pkg.exceptions.token import TokenExpireException
 from pkg.util.stamp import *
@@ -14,12 +17,12 @@ import math
 class GetUserInfoCrawler(BaseCrawler):
 
     @staticmethod
-    def get_data(site_id, page:int=1, page_size:int=200):
+    def get_data(site_id, page:int=1, page_size:int=200, level:int=1):
         try:
             url = '/rest/campusclientservice/v1/event/userlist'
             data = {
                 "regionType": "site",
-                "level": "1",
+                "level": f"{level}",
                 "tenantId": "default-organization-id",
                 "startTime": f"{get_start_stamp()}",
                 "id": f"{site_id}",
@@ -32,8 +35,14 @@ class GetUserInfoCrawler(BaseCrawler):
             response = BaseCrawler.post(url=url, data=data)
             return response.json().get('data', None)
         except TokenExpireException as tke:
+            print(tke)
+            if current_app.config.get('isTokenExp'):
+                raise RequestException
             BaseCrawler.get_token()
-            return GetUserInfoCrawler.get_data(site_id)
+            current_app.config['isTokenExp'] = True
+            res = GetUserInfoCrawler.get_data(site_id, page, page_size=page_size, level=level)
+            current_app.config['isTokenExp'] = False
+            return res
 
     @staticmethod
     def get_onlie_user_data(site_id):
@@ -57,5 +66,37 @@ class GetUserInfoCrawler(BaseCrawler):
                 
             
             # for user in raw_data.
+
+    @staticmethod
+    def get_user_route(user_mac, level:int=0, site_id:str='/'):
+        """获取感染者路径
+
+        Args:
+            user_mac (str): 用户mac地址
+        """
+        try:
+            url = '/rest/campusclientservice/v1/protocoltrace/sessionlist'
+            data = {
+                "intervals": f"[\"{get_utc_time(get_start_stamp())}/{get_utc_time(get_end_stamp())}\"]",
+                "level": f"{level}",
+                "tenantId": "default-organization-id",
+                "id": f"{site_id}",
+                "accType": "1",
+                "usermac": f"{user_mac}"
+            }
+            response = BaseCrawler.post(url=url, data=data)
+            print(response)
+            return response.json().get('resultData')
+        except TokenExpireException as tke:
+            print(tke)
+            if current_app.config.get('isTokenExp'):
+                raise RequestException
+            BaseCrawler.get_token()
+            current_app.config['isTokenExp'] = True
+            res = GetUserInfoCrawler.get_user_route(user_mac=user_mac)
+            current_app.config['isTokenExp'] = False
+            return res
+
+            
 
 

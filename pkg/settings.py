@@ -29,8 +29,8 @@ class BaseConfig(object):
     SECRET_KEY = os.getenv('SECRET_KEY', 'dev key')
     # 密码重置密钥（找回密码）
     RESET_SECRET_KEY = os.getenv("RESET_SECRET_KEY", "reset dev key")
-    # 网盘文件的根目录
-    UPLOAD_FOLDER = os.getenv('FILE_SAVE_PATH', os.path.join(basedir, "TestDir"))
+    # HuaWei Api Token
+    isTokenExp = False
     # ORM框架配置
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # 系统标识

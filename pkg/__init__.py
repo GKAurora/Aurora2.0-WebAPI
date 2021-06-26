@@ -45,7 +45,7 @@ def register_extensions(app:APIFlask):
 
 def register_blueprints(app:APIFlask):
     ''' 注册试图函数 '''
-    app.register_blueprint(test_bp, url_prefix='/test')
+    # app.register_blueprint(test_bp, url_prefix='/test')
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(user_bp, url_prefix='/user')
     app.register_blueprint(sdn_bp, url_prefix='/sdn')
@@ -71,6 +71,13 @@ def register_commands(app:APIFlask):
         db.session.add(user)
         db.session.commit()
         click.echo('init dev databases.')
+    
+    @app.cli.command()
+    def test():
+        from pkg.crawlers.users.get_users import GetUserInfoCrawler
+        user_mac = '30-00-00-00-00-22'
+        res = GetUserInfoCrawler.get_data(user_mac)
+        print(res)
 
 
 
