@@ -66,9 +66,8 @@ class BaseCrawler(object):
                 raise TokenExpireException
             raise RequestException
         except requests.ConnectionError:
-            print("链接错误")
-        # except Exception as e:
-        #     print(type(e), e)
+            print("连接错误")
+
 
     @staticmethod
     def put(url:str, **kwargs) -> Response:

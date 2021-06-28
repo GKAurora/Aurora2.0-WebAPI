@@ -18,7 +18,7 @@ from pkg.schemas import make_res
 
 user_bp = APIBlueprint('user', __name__)
 
-@user_bp.route('/getUserInfo')
+@user_bp.route('/get_user_info')
 class BaseInfoView(MethodView):
 
     @auth_required(auth)

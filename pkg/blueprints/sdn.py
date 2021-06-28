@@ -26,17 +26,19 @@ from pkg.crawlers.users.get_err import GetUserErrCrawler
 sdn_bp = APIBlueprint('sdn', __name__)
 
 
-@sdn_bp.route('/getSDNInfo')
-class SDNSpeedInfoView(MethodView):
+@sdn_bp.route('/get_sdn_info')
+class SDNBaseInfoView(MethodView):
 
+    @sdn_bp.route('/get_sdn_info/<site_id>')
     @auth_required(auth)
     @doc(summary='获取站点信息', description='返回各种站点信息')
-    def get(self):
-        sites = GetSites().get_data()
+    def get(self, site_id='/'):
+        sites = GetSites().get_data(site_id=site_id)
         for s in sites:
             s['name'] = current_app.config.get('SITES_NAME').get(s['name'])
         return make_res(data=sites)
-
+    
+    @auth_required(auth)
     @doc(summary='质量评估体系健康度趋势',
         description='返回总速率，健康度，成功率，漫游达标率等各种健康度信息')
     @input(GetSpeedInSchema)
@@ -44,7 +46,9 @@ class SDNSpeedInfoView(MethodView):
         speeds = BaseSpeed.get_total_speed(**data)
         return make_res(data=speeds)
 
-
+# sdn_base_info = SDNBaseInfoView.as_view('SDNBaseInfoView')
+# sdn_bp.add_url_rule('/get_sdn_info/', defaults={"site_id": "/"}, view_func=sdn_base_info)
+# sdn_bp.add_url_rule('/get_sdn_info/<site_id>', view_func=sdn_base_info)
 
 @sdn_bp.route('/heatmap')
 class HeatMapView(MethodView):
@@ -61,7 +65,7 @@ class HeatMapView(MethodView):
         return make_res(data=res)
 
 
-@sdn_bp.route('/getUserRoute')
+@sdn_bp.route('/get_user_route')
 class GetUserRouteView(MethodView):
     """用户路径接口
     """
@@ -84,11 +88,11 @@ class GetUserRouteView(MethodView):
         return make_res(data=res)
 
     
-@sdn_bp.route('/getErr')
+@sdn_bp.route('/get_err')
 class GetErrorView(MethodView):
 
     @doc(summary="查询用户接入失败数据")
-    @input()
+    # @input()
     def post(self, data):
         res = GetUserErrCrawler.get_data(**data)
         return make_res(data=res)

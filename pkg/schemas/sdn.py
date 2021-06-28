@@ -36,5 +36,5 @@ class UserRouteInSchema(Schema):
 
 class GetSpeedInSchema(Schema):
     site_id = String(validate=Length(min=10))
-    startTime = Integer(validate=Length(equal=13))
-    endTime = Integer(validate=Length(equal=13))
+    start_time = Integer(validate=Length(equal=13))
+    end_time = Integer(validate=Length(equal=13))

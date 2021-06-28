@@ -13,10 +13,10 @@ import requests
 class GetSites(BaseCrawler):
 
     @staticmethod
-    def get_data():
+    def get_data(site_id:str='/'):
         try:
             url = '/rest/uninetwork-res/v1/position/subtree'
-            params = {'id': '/'}
+            params = {'id': f'{site_id}'}
             res = BaseCrawler.fetch(url=url, params=params)
             return res.json().get('data')
         except TokenExpireException as tke:

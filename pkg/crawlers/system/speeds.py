@@ -17,8 +17,8 @@ class BaseSpeed(BaseCrawler):
     @staticmethod
     def get_total_speed(
             site_id: str = "857b706e-67d9-49c0-b3cd-4bd1e6963c07",
-            startTime: int = get_start_stamp(),
-            endTime: int = get_end_stamp()):
+            start_time: int = get_start_stamp(),
+            end_time: int = get_end_stamp()):
         url = '/rest/campuswlanqualityservice/v1/expmonitor/rate/basictable'
         try:
             # '%7B%22regionType%22:%22site%22,%22level%22:%220%22,%22tenantId%22:%22default-organization-id%22,%22startTime%22:%221597766400000%22,%22id%22:%22857b706e-67d9-49c0-b3cd-4bd1e6963c07%22,%22endTime%22:%221597816800000%22%7D'
@@ -27,9 +27,9 @@ class BaseSpeed(BaseCrawler):
                     "regionType": "site",
                     "level": "0",
                     "tenantId": "default-organization-id",
-                    "startTime": f"{startTime}",
+                    "startTime": f"{start_time}",
                     "id": f"{site_id}",
-                    "endTime": f"{endTime}"
+                    "endTime": f"{end_time}"
                 }))
             }
             res = BaseCrawler.fetch(url=url, params=params)
@@ -37,5 +37,5 @@ class BaseSpeed(BaseCrawler):
         except TokenExpireException as tke:
             print('tke', tke)
             res = BaseCrawler.loop_token(
-                BaseSpeed.get_total_speed, site_id=site_id, startTime=startTime, endTime=endTime)
+                BaseSpeed.get_total_speed, site_id=site_id, start_time=start_time, end_time=end_time)
             return res
