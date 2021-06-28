@@ -20,5 +20,5 @@ class GetSites(BaseCrawler):
             res = BaseCrawler.fetch(url=url, params=params)
             return res.json().get('data')
         except TokenExpireException as tke:
-            BaseCrawler.get_token()
-            return GetSites.get_data()
+            res = BaseCrawler.loop_token(GetSites.get_data)
+            return res

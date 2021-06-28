@@ -118,4 +118,14 @@ class BaseCrawler(object):
         current_app.config.setdefault('token', token)
         return token
 
+    @staticmethod
+    def loop_token(func, **kwargs):
+        if current_app.config.get('isTokenExp'):
+                raise RequestException
+        BaseCrawler.get_token()
+        current_app.config['isTokenExp'] = True
+        res = func(**kwargs)
+        current_app.config['isTokenExp'] = False
+        return res
+
 

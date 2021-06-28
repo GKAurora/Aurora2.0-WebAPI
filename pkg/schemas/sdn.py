@@ -32,3 +32,9 @@ class UserRouteInSchema(Schema):
     user_mac = String(required=True, validate=Length(15, 20))
     level = Integer(validate=lambda s: s in range(10))
     site_id = String()
+
+
+class GetSpeedInSchema(Schema):
+    site_id = String(validate=Length(min=10))
+    startTime = Integer(validate=Length(equal=13))
+    endTime = Integer(validate=Length(equal=13))

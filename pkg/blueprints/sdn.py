@@ -6,7 +6,7 @@
     :date: 2021/06/17 20:30:49
 '''
 
-from pkg.schemas.sdn import UserListInSchema, UserRouteInSchema
+from pkg.schemas.sdn import GetSpeedInSchema, UserListInSchema, UserRouteInSchema
 from pkg.crawlers.users.get_users import GetUserInfoCrawler
 from pkg.crawlers.users.get_sites import GetSites
 import re
@@ -21,49 +21,42 @@ from pkg.schemas import make_res
 from pkg.crawlers.users.heatmap import HeatMap
 from pkg.crawlers.system.speeds import BaseSpeed
 from pkg.crawlers.users.get_users import GetUserInfoCrawler
-
+from pkg.crawlers.users.get_err import GetUserErrCrawler
 
 sdn_bp = APIBlueprint('sdn', __name__)
 
-@sdn_bp.route("/getSdnInfo")
-class SDNBaseInfoView(MethodView):
+
+@sdn_bp.route('/getSDNInfo')
+class SDNSpeedInfoView(MethodView):
 
     @auth_required(auth)
-    @doc(description='获取站点信息')
+    @doc(summary='获取站点信息', description='返回各种站点信息')
     def get(self):
         sites = GetSites().get_data()
         for s in sites:
             s['name'] = current_app.config.get('SITES_NAME').get(s['name'])
         return make_res(data=sites)
-    
-    # @auth_required(auth)
-    # @doc(description='查询用户列表')
-    # def post(self):
-    #     site_id = '857b706e-67d9-49c0-b3cd-4bd1e6963c07'
-    #     onlines = GetUserInfoCrawler.get_onlie_user_data(site_id=site_id)
 
-    #     return make_res(data={
-    #         'len': len(onlines),
-    #         'users': onlines
-    #     })
-
-
-@sdn_bp.route('/getSpeed')
-class SDNSpeedInfoView(MethodView):
-
-    def get(self):
-        speeds = BaseSpeed.get_total_speed()
+    @doc(summary='质量评估体系健康度趋势',
+        description='返回总速率，健康度，成功率，漫游达标率等各种健康度信息')
+    @input(GetSpeedInSchema)
+    def post(self, data):
+        speeds = BaseSpeed.get_total_speed(**data)
         return make_res(data=speeds)
 
 
 
 @sdn_bp.route('/heatmap')
 class HeatMapView(MethodView):
-    """热力图
-    """
+
     @auth_required(auth)
     @doc(description="获取各个ap节点接入数量")
     def get(self):
+        """热力图接口
+
+        Returns:
+            json: 标准响应体
+        """
         res = HeatMap.get_data()
         return make_res(data=res)
 
@@ -84,13 +77,21 @@ class GetUserRouteView(MethodView):
 
 
     @auth_required(auth)
-    @doc(description='获取用户一周内的移动路径')
+    @doc(summary='获取用户路径', description='获取用户一周内的移动路径')
     @input(UserRouteInSchema)
     def post(self, data):
         res = GetUserInfoCrawler.get_user_route(**data)
         return make_res(data=res)
 
     
+@sdn_bp.route('/getErr')
+class GetErrorView(MethodView):
+
+    @doc(summary="查询用户接入失败数据")
+    @input()
+    def post(self, data):
+        res = GetUserErrCrawler.get_data(**data)
+        return make_res(data=res)
 
 
 # @sdn_bp.route("/getUserInfo")

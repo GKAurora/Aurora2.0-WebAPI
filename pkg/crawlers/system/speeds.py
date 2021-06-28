@@ -6,7 +6,7 @@
     :date: 2021/06/24 22:02:22
 '''
 import json
-from urllib.parse import urlencode
+from urllib.parse import urlencode, quote
 from pkg.exceptions.token import TokenExpireException
 from pkg.util.stamp import get_end_stamp, get_start_stamp
 from pkg.crawlers.base import BaseCrawler
@@ -15,22 +15,27 @@ from pkg.crawlers.base import BaseCrawler
 class BaseSpeed(BaseCrawler):
 
     @staticmethod
-    def get_total_speed():
+    def get_total_speed(
+            site_id: str = "857b706e-67d9-49c0-b3cd-4bd1e6963c07",
+            startTime: int = get_start_stamp(),
+            endTime: int = get_end_stamp()):
         url = '/rest/campuswlanqualityservice/v1/expmonitor/rate/basictable'
         try:
-            params = urlencode(dict(param = {
-                "regionType": "site",
-                "level": "0",
-                "tenantId": "default-organizationid",
-                "startTime": f"{get_start_stamp()}",
-                "id": "/",
-                "endTime": f"{get_end_stamp()}"
-            }))
-            return params
+            # '%7B%22regionType%22:%22site%22,%22level%22:%220%22,%22tenantId%22:%22default-organization-id%22,%22startTime%22:%221597766400000%22,%22id%22:%22857b706e-67d9-49c0-b3cd-4bd1e6963c07%22,%22endTime%22:%221597816800000%22%7D'
+            params = {
+                "param": quote(str({
+                    "regionType": "site",
+                    "level": "0",
+                    "tenantId": "default-organization-id",
+                    "startTime": f"{startTime}",
+                    "id": f"{site_id}",
+                    "endTime": f"{endTime}"
+                }))
+            }
             res = BaseCrawler.fetch(url=url, params=params)
-            # print(res.json())
-            return res.json()
+            return res.json().get('data')
         except TokenExpireException as tke:
             print('tke', tke)
-            BaseCrawler.get_token()
-            BaseSpeed.get_total_speed()
+            res = BaseCrawler.loop_token(
+                BaseSpeed.get_total_speed, site_id=site_id, startTime=startTime, endTime=endTime)
+            return res

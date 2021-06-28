@@ -5,6 +5,7 @@
     :url: https://blog.farmer233.top
     :date: 2021/06/24 18:23:33
 '''
+import re
 from pkg.exceptions.reqerror import RequestException
 from pkg.util.time_parse import get_utc_time
 from typing import List
@@ -61,11 +62,9 @@ class GetUserInfoCrawler(BaseCrawler):
 
             return table_data
         except TokenExpireException as tke:
-            BaseCrawler.get_token()
-            # if total_size < raw_data.get('pageSize'):
-                
-            
-            # for user in raw_data.
+            res = BaseCrawler.loop_token(GetUserInfoCrawler.get_onlie_user_data, site_id=site_id)
+            return res
+
 
     @staticmethod
     def get_user_route(user_mac, level:int=0, site_id:str='/'):

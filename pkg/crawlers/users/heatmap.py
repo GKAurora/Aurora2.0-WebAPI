@@ -27,5 +27,5 @@ class HeatMap(BaseCrawler):
             return data
         except TokenExpireException as tke:
             print('tke', tke)
-            BaseCrawler.get_token()
-            return HeatMap.get_data()
+            res = BaseCrawler.loop_token(HeatMap.get_data)
+            return res
