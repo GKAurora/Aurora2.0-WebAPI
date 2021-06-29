@@ -39,5 +39,11 @@ class GetSpeedInSchema(Schema):
     start_time = Integer()
     end_time = Integer()
 
+class SDNGetInSchema(Schema):
+    site_id = String(validate=Length(min=10))
+    start_time = Integer()
+    end_time = Integer()
+    level = Integer()
+
 class GetUserConnErrorInSchema(Schema):
     acc_type = Integer(validate=lambda s: s in [0, 1])

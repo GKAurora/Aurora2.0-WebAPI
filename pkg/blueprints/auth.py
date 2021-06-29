@@ -113,7 +113,6 @@ def controller(data):
         user.set_password(data.get('password'))
     if data.get('email') != None:
         user.email = data.get('email')
-    print(data.get('state'), type(data.get('state')))
     if data.get('state') != None:
         user.state = data.get('state')
     db.session.add(user)

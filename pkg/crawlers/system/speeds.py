@@ -5,7 +5,6 @@
     :url: https://blog.farmer233.top
     :date: 2021/06/24 22:02:22
 '''
-import json
 from urllib.parse import urlencode, quote
 from pkg.exceptions.token import TokenExpireException
 from pkg.util.stamp import get_end_stamp, get_start_stamp
@@ -18,14 +17,15 @@ class BaseSpeed(BaseCrawler):
     def get_total_speed(
             site_id: str = "857b706e-67d9-49c0-b3cd-4bd1e6963c07",
             start_time: int = get_start_stamp(),
-            end_time: int = get_end_stamp()):
+            end_time: int = get_end_stamp(),
+            level: int = 0):
         url = '/rest/campuswlanqualityservice/v1/expmonitor/rate/basictable'
         try:
             # '%7B%22regionType%22:%22site%22,%22level%22:%220%22,%22tenantId%22:%22default-organization-id%22,%22startTime%22:%221597766400000%22,%22id%22:%22857b706e-67d9-49c0-b3cd-4bd1e6963c07%22,%22endTime%22:%221597816800000%22%7D'
             params = {
                 "param": quote(str({
                     "regionType": "site",
-                    "level": "0",
+                    "level": f"{level}",
                     "tenantId": "default-organization-id",
                     "startTime": f"{start_time}",
                     "id": f"{site_id}",

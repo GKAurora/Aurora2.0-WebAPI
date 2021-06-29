@@ -68,7 +68,7 @@ class GetUserInfoCrawler(BaseCrawler):
 
     @staticmethod
     def get_user_route(user_mac, level:int=0, site_id:str='/'):
-        """获取感染者路径
+        """获取感染者路径(获取用户接入信息)
 
         Args:
             user_mac (str): 用户mac地址

@@ -6,7 +6,8 @@
     :date: 2021/06/17 20:30:49
 '''
 
-from pkg.schemas.sdn import GetSpeedInSchema, UserListInSchema, UserRouteInSchema
+from pkg.crawlers.system.get_single import GetSingle
+from pkg.schemas.sdn import GetSpeedInSchema, SDNGetInSchema, UserListInSchema, UserRouteInSchema
 from pkg.crawlers.users.get_users import GetUserInfoCrawler
 from pkg.crawlers.users.get_sites import GetSites
 import re
@@ -22,13 +23,21 @@ from pkg.crawlers.users.heatmap import HeatMap
 from pkg.crawlers.system.speeds import BaseSpeed
 from pkg.crawlers.users.get_users import GetUserInfoCrawler
 from pkg.crawlers.users.get_err import GetUserErrCrawler
+from pkg.crawlers.system.get_all import GetArgs
 
 sdn_bp = APIBlueprint('sdn', __name__)
 
 
 @sdn_bp.route('/get_sdn_info')
 class SDNBaseInfoView(MethodView):
+    """获取站点信息和查询质量评估体系健康度趋势
 
+    Args:
+        MethodView ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
     @auth_required(auth)
     @doc(summary='获取站点信息', description='传入query string-> site_id，返回对应站点信息，默认返回所有站点')
     def get(self):
@@ -39,7 +48,7 @@ class SDNBaseInfoView(MethodView):
     @auth_required(auth)
     @doc(summary='质量评估体系健康度趋势',
         description='返回总速率，健康度，成功率，漫游达标率等各种健康度信息')
-    @input(GetSpeedInSchema)
+    @input(SDNGetInSchema)
     def post(self, data):
         speeds = BaseSpeed.get_total_speed(**data)
         return make_res(data=speeds)
@@ -62,7 +71,7 @@ class HeatMapView(MethodView):
 
 @sdn_bp.route('/get_user_route')
 class GetUserRouteView(MethodView):
-    """用户路径接口
+    """用户路径接口（获取用户列表、接入信息）
     """
 
     @auth_required(auth)
@@ -85,12 +94,42 @@ class GetUserRouteView(MethodView):
     
 @sdn_bp.route('/get_err')
 class GetErrorView(MethodView):
-
+    """获取接入失败数据
+    """
     @doc(summary="查询用户接入失败数据")
     # @input()
     def post(self, data):
         res = GetUserErrCrawler.get_data(**data)
         return make_res(data=res)
+
+@sdn_bp.route('/get_total_data')
+class GetArgsView(MethodView):
+
+    @auth_required(auth)
+    @doc(summary='系统设备多维度数据汇总', description="可用于六角形")
+    @input(SDNGetInSchema)
+    def post(self, data):
+        res = GetArgs.get_data(**data)
+        return make_res(data=res)
+
+
+@sdn_bp.route('/get_trend_single')
+class GetSingleView(MethodView):
+
+    @auth_required(auth)
+    @doc(summary='质量评估体系单个维度评估结果趋势图')
+    @input(SDNGetInSchema)
+    def put(self, data):
+        res = GetSingle.get_trend_data(**data)
+        return make_res(data=res)
+    
+    @auth_required(auth)
+    @input(SDNGetInSchema)
+    @doc(summary='查询质量评估体系单个维度数据，包括根因指标')
+    def post(self, data):
+        res = GetSingle.get_data(**data)
+        return make_res(data=res)
+        pass
 
 
 
