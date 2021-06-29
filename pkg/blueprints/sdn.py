@@ -44,9 +44,6 @@ class SDNBaseInfoView(MethodView):
         speeds = BaseSpeed.get_total_speed(**data)
         return make_res(data=speeds)
 
-# sdn_base_info = SDNBaseInfoView.as_view('SDNBaseInfoView')
-# sdn_bp.add_url_rule('/get_sdn_info/', defaults={"site_id": "/"}, view_func=sdn_base_info)
-# sdn_bp.add_url_rule('/get_sdn_info/<site_id>', view_func=sdn_base_info)
 
 @sdn_bp.route('/heatmap')
 class HeatMapView(MethodView):

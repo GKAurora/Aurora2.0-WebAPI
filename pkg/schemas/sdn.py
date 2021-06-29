@@ -36,5 +36,8 @@ class UserRouteInSchema(Schema):
 
 class GetSpeedInSchema(Schema):
     site_id = String(validate=Length(min=10))
-    start_time = Integer(validate=Length(equal=13))
-    end_time = Integer(validate=Length(equal=13))
+    start_time = Integer()
+    end_time = Integer()
+
+class GetUserConnErrorInSchema(Schema):
+    acc_type = Integer(validate=lambda s: s in [0, 1])
