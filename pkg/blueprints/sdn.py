@@ -13,7 +13,7 @@ import re
 from apiflask import APIBlueprint, input, output, abort
 from apiflask.decorators import auth_required, doc
 from flask.views import MethodView
-from flask.globals import current_app
+from flask.globals import current_app, request
 # 
 from pkg.extensions import auth
 from pkg.schemas import make_res
@@ -29,13 +29,11 @@ sdn_bp = APIBlueprint('sdn', __name__)
 @sdn_bp.route('/get_sdn_info')
 class SDNBaseInfoView(MethodView):
 
-    @sdn_bp.route('/get_sdn_info/<site_id>')
     @auth_required(auth)
-    @doc(summary='获取站点信息', description='返回各种站点信息')
-    def get(self, site_id='/'):
-        sites = GetSites().get_data(site_id=site_id)
-        for s in sites:
-            s['name'] = current_app.config.get('SITES_NAME').get(s['name'])
+    @doc(summary='获取站点信息', description='传入query string-> site_id，返回对应站点信息，默认返回所有站点')
+    def get(self):
+        site_id = request.args.get('site_id', '/')
+        sites = GetSites.get_data(site_id=site_id)
         return make_res(data=sites)
     
     @auth_required(auth)
@@ -96,6 +94,8 @@ class GetErrorView(MethodView):
     def post(self, data):
         res = GetUserErrCrawler.get_data(**data)
         return make_res(data=res)
+
+
 
 
 # @sdn_bp.route("/getUserInfo")

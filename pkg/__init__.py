@@ -74,9 +74,9 @@ def register_commands(app:APIFlask):
     
     @app.cli.command()
     def test():
-        from pkg.crawlers.users.get_users import GetUserInfoCrawler
+        from pkg.crawlers.users import get_user_location
         user_mac = '30-00-00-00-00-22'
-        res = GetUserInfoCrawler.get_data(user_mac)
+        res = get_user_location.GetUserLocation.get_data()
         print(res)
 
 
