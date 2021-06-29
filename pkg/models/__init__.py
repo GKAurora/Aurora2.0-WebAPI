@@ -21,6 +21,7 @@ class User(db.Model):
     password_hash = sa.Column(sa.String(128))
     email = sa.Column(sa.String(260))
     group = sa.Column(sa.Integer, default=0)
+    state = sa.Column(sa.Boolean, default=True)
     # 后期动态
     login_ip = sa.Column(sa.String(21))
     last_time = sa.Column(

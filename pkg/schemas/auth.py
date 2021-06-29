@@ -7,7 +7,7 @@
 '''
 
 from apiflask import Schema
-from apiflask.fields import String, Integer, Email
+from apiflask.fields import String, Integer, Email, Boolean
 from marshmallow import validate
 from marshmallow.validate import Length, Regexp
 
@@ -15,8 +15,19 @@ from marshmallow.validate import Length, Regexp
 class UserLoginInSchema(Schema):
     username = String(required=True, validate=Length(5, 10))
     password = String(required=True, validate=Length(5, 20))
-
+    
 class UserRegInSchema(UserLoginInSchema):
     # pass
     email = Email(required=True)
     group = Integer(validate=lambda s: s < 10 and s >= 0)
+
+class UserMessageInSchema(Schema):
+    password = String(validate=Length(5, 20))
+    email = Email()
+    state = Boolean()
+
+class UserMessageOutSchema(Schema):
+    username = String()
+    email = Email()
+    group = Integer()
+    state = Boolean()
