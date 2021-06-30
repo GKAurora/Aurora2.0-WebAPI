@@ -6,19 +6,19 @@
     :date: 2021/06/17 20:30:49
 '''
 
-from pkg.crawlers.system.get_single import GetSingle
-from pkg.schemas.sdn import GetSpeedInSchema, SDNGetInSchema, UserListInSchema, UserRouteInSchema
-from pkg.crawlers.users.get_users import GetUserInfoCrawler
-from pkg.crawlers.users.get_sites import GetSites
-import re
 from apiflask import APIBlueprint, input, output, abort
 from apiflask.decorators import auth_required, doc
 from flask.views import MethodView
 from flask.globals import current_app, request
+from marshmallow.fields import String
 # 
 from pkg.extensions import auth
 from pkg.schemas import make_res
+from pkg.schemas.sdn import SDNGetInSchema, UserListInSchema, UserRouteInSchema
 # crawlers
+from pkg.crawlers.system.get_single import GetSingle
+from pkg.crawlers.users.get_users import GetUserInfoCrawler
+from pkg.crawlers.users.get_sites import GetSites
 from pkg.crawlers.users.heatmap import HeatMap
 from pkg.crawlers.system.speeds import BaseSpeed
 from pkg.crawlers.users.get_users import GetUserInfoCrawler
@@ -39,9 +39,10 @@ class SDNBaseInfoView(MethodView):
         [type]: [description]
     """
     @auth_required(auth)
+    @input({'site_id': String()}, location='query')
     @doc(summary='获取站点信息', description='传入query string-> site_id，返回对应站点信息，默认返回所有站点')
-    def get(self):
-        site_id = request.args.get('site_id', '/')
+    def get(self, data):
+        site_id = data.get('site_id', '/')
         sites = GetSites.get_data(site_id=site_id)
         return make_res(data=sites)
     
