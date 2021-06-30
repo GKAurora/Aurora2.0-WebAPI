@@ -48,5 +48,5 @@ class SDNGetInSchema(Schema):
     end_time = Integer(default=get_end_stamp(), missing=get_end_stamp())
     level = Integer()
 
-class GetUserConnErrorInSchema(Schema):
+class GetUserConnErrorInSchema(SDNGetInSchema):
     acc_type = Integer(validate=lambda s: s in [0, 1])

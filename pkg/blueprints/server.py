@@ -35,12 +35,12 @@ class GetCpuInfoView(MethodView):
         return make_res(data=res)
 
 
-    @auth_required(auth)
-    @doc(summary='获取各个逻辑处理器利用率')
-    def post():
-        pass
+    # @auth_required(auth)
+    # @doc(summary='获取各个逻辑处理器利用率')
+    # def post():
+    #     pass
 
-
+@auth_required(auth)
 @sys_bp.route('/memory')
 @doc(summary='获取内存信息', description='默认获取物理内存，swap参数True时获取交换分区信息')
 @input({'swap': Boolean(default=False, missing=False)}, location='query')
