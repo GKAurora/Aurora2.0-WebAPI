@@ -71,7 +71,7 @@ class TestingConfig(BaseConfig):
 
 # 生产环境配置
 class ProductionConfig(BaseConfig):
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', prefix + os.path.join(basedir, 'data.db'))
 
 # xport配置
 config = {

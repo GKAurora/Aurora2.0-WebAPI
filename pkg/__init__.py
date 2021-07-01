@@ -83,7 +83,12 @@ def register_commands(app:APIFlask):
         print(res)
 
 
-
+def register_hooks(app:APIFlask):
+    @app.before_first_request
+    def init_token():
+        from pkg.crawlers.base import BaseCrawler
+        token = BaseCrawler.get_token()
+        app.logger.info(f'获取华为API接口Token成功, token信息:{token}')
 
 def register_errors(app:APIFlask):
     ''' 注册错误处理钩子 '''
