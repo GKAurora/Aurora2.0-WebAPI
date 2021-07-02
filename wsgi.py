@@ -18,4 +18,4 @@ if os.path.exists(dotenv_path):
 from pkg import create_app
 
 app = create_app('production')
-app.wsgi_app = ProxyFix(app.wsgi_app, num_proxies=1)
+app.wsgi_app = ProxyFix(app.wsgi_app)
