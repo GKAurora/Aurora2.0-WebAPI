@@ -60,7 +60,8 @@ class AuthViews(MethodView):
         if not user.state:
             raise ValueError('用户不允许登录')
         else:
-            login_ip = request.host
+            login_ip = request.remote_addr
+            print(login_ip)
             user.login_ip = login_ip
             token:str = user.generate_auth_token()
             try:
