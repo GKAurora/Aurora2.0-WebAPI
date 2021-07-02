@@ -8,6 +8,7 @@
 
 import os
 from dotenv import load_dotenv
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 dotenv_path = os.path.join(os.getcwd(), '.env')
 
@@ -17,3 +18,4 @@ if os.path.exists(dotenv_path):
 from pkg import create_app
 
 app = create_app('production')
+app.wsgi_app = ProxyFix(app.wsgi_app, num_proxies=1)
