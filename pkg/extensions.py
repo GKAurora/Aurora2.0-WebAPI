@@ -8,11 +8,12 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from apiflask import HTTPTokenAuth
+from flask_cors import CORS
 from flask import g, current_app
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 db = SQLAlchemy()
-
+cors = CORS()
 auth = HTTPTokenAuth()
 mail = Mail()
 

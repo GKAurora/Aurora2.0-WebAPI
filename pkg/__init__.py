@@ -16,7 +16,7 @@ from flask import cli
 
 # Import model
 from pkg.settings import config
-from pkg.extensions import db, mail
+from pkg.extensions import db, mail, cors
 
 # import views
 from pkg.blueprints.test import test_bp
@@ -43,6 +43,7 @@ def register_extensions(app:APIFlask):
     ''' 初始化扩展 '''
     db.init_app(app)
     mail.init_app(app)
+    cors.init_app(app)
 
 
 def register_blueprints(app:APIFlask):
