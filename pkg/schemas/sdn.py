@@ -38,12 +38,12 @@ class UserRouteInSchema(Schema):
 
 
 class GetSpeedInSchema(Schema):
-    site_id = String(validate=Length(min=10), default=SITE, missing=SITE)
+    site_id = String(default=SITE, missing=SITE)
     start_time = Integer(default=get_start_stamp(), missing=get_start_stamp())
     end_time = Integer(default=get_end_stamp(), missing=get_end_stamp())
 
 class SDNGetInSchema(Schema):
-    site_id = String(validate=Length(min=10), default=SITE, missing=SITE)
+    site_id = String(default=SITE, missing=SITE)
     start_time = Integer(default=get_start_stamp(), missing=get_start_stamp())
     end_time = Integer(default=get_end_stamp(), missing=get_end_stamp())
     level = Integer()
