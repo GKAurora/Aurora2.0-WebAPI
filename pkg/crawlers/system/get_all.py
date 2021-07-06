@@ -38,10 +38,13 @@ class GetArgs(BaseCrawler):
                 }))
             }
             res = BaseCrawler.fetch(url=url, params=params)
+
+            if len(res.text) <= 5:
+                return {"data": None}
+            
             return res.json().get('data')
         except TokenExpireException:
             res = BaseCrawler.loop_token(GetArgs.get_data,
                                          site_id=site_id, start_time=start_time, end_time=end_time)
             return res
-
     

@@ -99,7 +99,7 @@ def register_errors(app:APIFlask):
     
     @app.errorhandler(Exception)
     def internal_server_error(e):
-        return make_res(code=500, message=str(e)), 500
+        return make_res(code=500, message=f'{e};{type(e)}'), 500
 
 
 
