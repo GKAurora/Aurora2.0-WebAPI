@@ -32,7 +32,7 @@ class UserListInSchema(Schema):
 
 
 class UserRouteInSchema(Schema):
-    user_mac = String(required=True, validate=Length(15, 20))
+    user_mac = String(required=True, validate=Length(6, 20))
     level = Integer(validate=lambda s: s in range(10), default=1, missing=1)
     site_id = String(default='/', missing='/')
 
